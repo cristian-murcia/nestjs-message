@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Put, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Put, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import { IResponse } from 'src/shared/interfaces/response';
 import { ValidationPipe } from 'src/shared/pipes/validation-pipe';
 import { UserDto } from './dto/userDto';
-import { User } from './entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { UserService } from './providers/user.service';
 
 @Controller('user')
@@ -115,22 +115,22 @@ export class UserController {
 
   @Delete(':id')
   async deleteUserForId(
-    @Param('id') UserId: string,
+    @Param('id') userId: string,
     @Res() res: Response
   ): Promise<void> {
 
-    if (Number(UserId)) {
+    if (Number(userId)) {
 
-      let exist = await this.userService.getUserForId(Number(UserId));
+      let exist = await this.userService.getUserForId(Number(userId));
       if (!exist) {
         throw new NotFoundException({
           status: HttpStatus.NOT_FOUND,
           error: null,
-          message: `No existe un usuario con el id ${UserId}`
+          message: `No existe un usuario con el id ${userId}`
         } as IResponse);
       }
 
-      let result = await this.userService.deleteUserForId(Number(UserId));
+      let result = await this.userService.deleteUserForId(Number(userId));
 
       if (result) {
         res.status(HttpStatus.OK).send({

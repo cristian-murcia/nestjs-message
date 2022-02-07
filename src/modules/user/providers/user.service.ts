@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IResponse } from 'src/shared/interfaces/response';
 import { DeleteResult, Repository } from 'typeorm';
+
 import { UserDto } from '../dto/userDto';
-import { User } from '../entities/user.entity';
+import { User } from '../../../entities/user.entity';
+import { IResponse } from 'src/shared/interfaces/response';
 
 @Injectable()
 export class UserService {
@@ -57,6 +58,7 @@ export class UserService {
             const user = new User;
             user.email = data.email;
             user.name = data.name;
+            user.password = data.password;
             let userCreated = await this.userRepository.save(user);
             return userCreated
 

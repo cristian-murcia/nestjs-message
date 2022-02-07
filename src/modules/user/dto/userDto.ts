@@ -1,25 +1,28 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsNumber, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UserDto {
-  
+
   readonly id: number;
 
-  @IsString({
-    message: 'El Name debe ser un string',
-  })
-  @IsNotEmpty({
-    message: 'El Name no puede estar vacio',
-  })
+  @IsString()
+  @MinLength(4)
+  @MaxLength(50)
+  @ApiProperty()
   readonly name: string;
 
-  @IsString({
-    message: 'Email debe ser un string',
-  })
-  @IsNotEmpty({
-    message: 'El email no puede estar vacio',
-  })
-  @IsEmail({}, {
-    message: 'El email no es un correo valido'
-  })
+  @IsString()
+  @IsEmail()
+  @MinLength(10)
+  @MaxLength(255)
+  @ApiProperty()
   readonly email: string;
+
+  @IsString()
+  @MinLength(8)
+  @MaxLength(30)
+  @ApiProperty()
+  password: string;
+
+
 }
