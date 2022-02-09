@@ -66,7 +66,7 @@ export class UserService {
 
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: error,
+                error: error.sqlMessage || error,
                 message: 'Ha ocurrido un error interno, intente de nuevo'
             } as IResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }

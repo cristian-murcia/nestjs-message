@@ -1,4 +1,8 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Put, Query, Res } from '@nestjs/common';
+import {
+  Body, Controller, Delete, Get,
+  HttpException, HttpStatus, NotFoundException, Param, Post, Put, Res
+} from '@nestjs/common';
+import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiParam, ApiProperty, ApiTags, ApiUnauthorizedResponse, } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { IResponse } from 'src/shared/interfaces/response';
@@ -7,10 +11,15 @@ import { UserDto } from './dto/userDto';
 import { User } from '../../entities/user.entity';
 import { UserService } from './providers/user.service';
 
+@ApiTags('Usuario')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
+  @ApiOkResponse({ description: "Success", type: UserDto })
+  @ApiBadRequestResponse({ description: "Bad request", type: UserDto })
+  @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
+  @ApiOperation({ summary: "Traer todos los usuarios" })
   @Get()
   async getAllUser(
     @Res() res: Response
@@ -25,6 +34,11 @@ export class UserController {
     } as IResponse);
   }
 
+  @ApiOkResponse({ description: "Success", type: UserDto })
+  @ApiBadRequestResponse({ description: "Bad request", type: UserDto })
+  @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
+  @ApiParam({ name: "id", description: "Id de usuario", example: "1" })
+  @ApiOperation({ summary: "Traer un usuario por Id" })
   @Get(':id')
   async getUserForId(
     @Param('id') id: string,
@@ -54,6 +68,10 @@ export class UserController {
     }
   }
 
+  @ApiOkResponse({ description: "Success", type: UserDto })
+  @ApiBadRequestResponse({ description: "Bad request", type: UserDto })
+  @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
+  @ApiOperation({ summary: "Crear un nuevo usuario" })
   @Post()
   async createUser(
     @Body(new ValidationPipe()) createUserDto: UserDto,
@@ -72,6 +90,10 @@ export class UserController {
     }
   }
 
+  @ApiOkResponse({ description: "Success", type: UserDto })
+  @ApiBadRequestResponse({ description: "Bad request", type: UserDto })
+  @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
+  @ApiOperation({ summary: "Actualizar un usuario existente" })
   @Put(':id')
   async updateUser(
     @Param('id') id: string,
@@ -113,6 +135,11 @@ export class UserController {
 
   }
 
+  @ApiOkResponse({ description: "Success", type: UserDto })
+  @ApiBadRequestResponse({ description: "Bad request", type: UserDto })
+  @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
+  @ApiParam({ name: "id", description: "Id de usuario a eliminar", example: "1" })
+  @ApiOperation({ summary: "Eliminar un usuario existente" })
   @Delete(':id')
   async deleteUserForId(
     @Param('id') userId: string,

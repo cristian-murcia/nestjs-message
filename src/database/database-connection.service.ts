@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 
-import { User } from '../entities/user.entity';
+import { User, Token } from '../entities';
 
 @Injectable()
 export class DatabaseConnectionService implements TypeOrmOptionsFactory {
@@ -14,9 +14,9 @@ export class DatabaseConnectionService implements TypeOrmOptionsFactory {
             username: 'root',
             password: '',
             database: 'pruebaNest',
-            synchronize: true, //true for create
-            dropSchema: true,
-            entities: [User],
+            synchronize: false, //true for create
+            dropSchema: false,
+            entities: [User, Token],
         } as TypeOrmModuleOptions;
     }
 }

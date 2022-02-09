@@ -1,21 +1,39 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { DatabaseConnectionService } from './database/database-connection.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { UserModule } from './modules/user/user.module';
-import { DatabaseConnectionService } from './database/database-connection.service';
+import { TokenModule } from './modules/token/token.module';
 import { SharedModule } from './shared/shared.module';
+import { AuthTokenMiddleware } from './shared/middleware/auth-token.middleware';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './shared/exception/notFoundException';
 
 @Module({
   imports: [
     UserModule,
+    TokenModule,
     SharedModule,
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConnectionService
-    })
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter
+    }
+  ],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthTokenMiddleware)
+      .forRoutes('user');
+  }
+}
