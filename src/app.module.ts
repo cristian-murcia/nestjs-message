@@ -1,23 +1,39 @@
-/* eslint-disable prettier/prettier */
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { DatabaseConnectionService } from './database/database-connection.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { configDataDev } from './database/config';
+
 import { UserModule } from './modules/user/user.module';
+import { TokenModule } from './modules/token/token.module';
 import { SharedModule } from './shared/shared.module';
-import { User } from './modules/user/entities/user.entity';
-import { UserService } from './modules/user/providers/user.service';
-import { UserController } from './modules/user/user.controller';
+import { AuthTokenMiddleware } from './shared/middleware/auth-token.middleware';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './shared/exception/notFoundException';
 
 @Module({
   imports: [
     UserModule,
+    TokenModule,
     SharedModule,
-    TypeOrmModule.forRoot({ ...configDataDev, entities: [User], autoLoadEntities: true })
+    TypeOrmModule.forRootAsync({
+      useClass: DatabaseConnectionService
+    }),
   ],
-  controllers: [AppController, UserController],
-  providers: [AppService, UserService],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter
+    }
+  ],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthTokenMiddleware)
+      .forRoutes('user');
+  }
+}
