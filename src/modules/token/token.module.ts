@@ -13,7 +13,10 @@ import { HttpExceptionFilter } from 'src/shared/exception/notFoundException';
   imports: [
     TypeOrmModule.forFeature([Token, User]),
     JwtModule.register({
-      secret: "HolaPrecioso"
+      secret: "HolaPrecioso",
+      signOptions: {
+        algorithm: 'HS256',
+      },
     }),
     PassportModule.register({ defaultStrategy: "jwt" }),
     SharedModule

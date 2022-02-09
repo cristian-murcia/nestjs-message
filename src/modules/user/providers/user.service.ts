@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 
@@ -18,16 +18,19 @@ export class UserService {
      * Get all user
      * @returns 
      */
-    public async getAllUser(): Promise<User[]> {
+    public async getAllUser(): Promise<IResponse> {
         try {
-            return this.userRepository.find();
+            let users: Array<User> = await this.userRepository.find();
+
+            return {
+                status: HttpStatus.OK,
+                message: "Usuarios consultados con éxito",
+                error: null,
+                result: users
+            }
 
         } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: error,
-                message: 'Ha ocurrido un error interno, intente de nuevo'
-            } as IResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerErrorException('Ha ocurrido un error interno, intente de nuevo');
         }
     }
 
@@ -35,16 +38,23 @@ export class UserService {
      * Get user for id
      * @returns 
      */
-    public async getUserForId(id: number): Promise<User> {
+    public async getUserForId(id: number): Promise<IResponse> {
         try {
-            return await this.userRepository.findOne(id);
+            let user: User = await this.userRepository.findOne(id);
+
+            if (user) {
+                return {
+                    status: HttpStatus.OK,
+                    message: "Usuario consultado con éxito",
+                    error: null,
+                    result: user
+                }
+            } else {
+                throw new NotFoundException('El usuario no existe')
+            }
 
         } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: error,
-                message: 'Ha ocurrido un error interno, intente de nuevo'
-            } as IResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerErrorException('Ha ocurrido un error interno, intente de nuevo');
         }
     }
 
@@ -53,22 +63,23 @@ export class UserService {
      * @param data UserDto
      * @returns 
      */
-    public async createUser(data: UserDto): Promise<User> {
+    public async createUser(data: UserDto): Promise<IResponse> {
         try {
             const user = new User;
             user.email = data.email;
             user.name = data.name;
             user.password = data.password;
             let userCreated = await this.userRepository.save(user);
-            return userCreated
+
+            return {
+                status: HttpStatus.OK,
+                message: "Usuario creado con éxito",
+                error: null,
+                result: userCreated
+            }
 
         } catch (error) {
-
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: error.sqlMessage || error,
-                message: 'Ha ocurrido un error interno, intente de nuevo'
-            } as IResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerErrorException('Ha ocurrido un error interno, intente de nuevo');
         }
     }
 
@@ -77,22 +88,23 @@ export class UserService {
      * @param data UserDto
      * @returns 
      */
-    public async updateUser(id: number, data: UserDto): Promise<User> {
+    public async updateUser(id: number, data: UserDto): Promise<IResponse> {
         try {
             const user = new User;
             user.id = id;
             user.email = data.email;
             user.name = data.name;
             let userCreated = await this.userRepository.save(user);
-            return userCreated
+
+            return {
+                status: HttpStatus.OK,
+                message: "Usuario actualizado con éxito",
+                error: null,
+                result: userCreated
+            }
 
         } catch (error) {
-
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: error,
-                message: 'Ha ocurrido un error interno, intente de nuevo'
-            } as IResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerErrorException('Ha ocurrido un error interno, intente de nuevo');
         }
     }
 
@@ -101,17 +113,28 @@ export class UserService {
      * @param id 
      * @returns 
      */
-    public async deleteUserForId(id: number): Promise<DeleteResult> {
+    public async deleteUserForId(id: number): Promise<IResponse> {
         try {
-            let user = await this.userRepository.delete(id);
-            return user;
+            let { affected } = await this.userRepository.delete(id);
+
+            if (affected > 0) {
+                return {
+                    status: HttpStatus.OK,
+                    message: "Usuario eliminado con éxito",
+                    error: null,
+                    result: null
+                }
+            } else {
+                throw new NotFoundException('No se ha encontrado el ususario')
+            }
 
         } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: error,
-                message: 'Ha ocurrido un error interno, intente de nuevo'
-            } as IResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            if (error instanceof InternalServerErrorException) {
+                throw new InternalServerErrorException('Ha ocurrido un error interno, intente de nuevo');
+            } else {
+                throw error
+            }
         }
     }
 }

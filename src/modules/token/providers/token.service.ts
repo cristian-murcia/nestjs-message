@@ -43,7 +43,7 @@ export class TokenService {
      * @param token 
      * @returns 
      */
-    public async saveToken(token: TokenDto): Promise<Token> {
+    public async saveToken(token: TokenDto): Promise<IResponse> {
         try {
             const createToken = new Token();
             createToken.idUser = token.idUser;
@@ -51,7 +51,14 @@ export class TokenService {
             createToken.ipAddress = token.ipAddress;
             createToken.deletedAt = new Date();
 
-            return await this.tokenRepository.save(createToken);
+            let result = await this.tokenRepository.save(createToken);
+
+            return {
+                status: HttpStatus.OK,
+                message: "Token creado con éxito",
+                error: null,
+                result: result
+            }
 
         } catch (error) {
             throw new HttpException({
@@ -68,32 +75,29 @@ export class TokenService {
      * @param ipAddres 
      * @returns 
      */
-    public async revokeToken(idUser: number, ipAddres: string): Promise<Token> {
+    public async revokeToken(token: string): Promise<IResponse> {
         try {
-            let tokenActive = await this.tokenRepository.findOne({
-                where: {
-                    idUser: idUser,
-                    ipAddress: ipAddres
-                }
-            });
+            let user: any = JSON.parse(String(this.jwtService.decode(token)));
+            console.log('User', user);
 
-            if (tokenActive) {
-                await this.tokenRepository.delete(tokenActive.id);
-                return tokenActive;
+            let deletedTokenActive = await this.tokenRepository.delete(token);
+
+            if (!deletedTokenActive) {
+                throw new NotFoundException('No se ha encontrado el token');
             }
 
-            throw new NotFoundException({
-                status: HttpStatus.NOT_FOUND,
+            return {
+                status: HttpStatus.OK,
+                message: "Token eliminado con éxito",
                 error: null,
-                message: 'No se ha encontrado el token'
-            } as IResponse);
+                result: null
+            }
 
         } catch (error) {
-            throw new HttpException({
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                error: error,
-                message: 'Ha ocurrido un error interno, intente de nuevo'
-            } as IResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            if (error instanceof InternalServerErrorException) {
+                throw new InternalServerErrorException('Ha ocurrido un error interno, intente de nuevo');
+            }
+            throw error;
         }
     }
 
@@ -134,7 +138,7 @@ export class TokenService {
             } as IResponse;
 
         } catch (error: any) {
-            if(error instanceof InternalServerErrorException){
+            if (error instanceof InternalServerErrorException) {
                 throw new InternalServerErrorException('Error interno mi rey');
             } else {
                 throw error;

@@ -8,7 +8,6 @@ import { TokenService } from './providers/token.service';
 
 @ApiTags('Autenticacion')
 @Controller('authentication')
-@UseFilters(HttpExceptionFilter)
 export class TokenController {
     constructor(private readonly tokenService: TokenService) { }
 
@@ -19,7 +18,7 @@ export class TokenController {
         @Body(new ValidationPipe()) login: LoginDto,
         @Req() req: Request,
         @Res() res: Response,
-    ): Promise<any> {
+    ): Promise<void> {
         try {
             let ipAddress: string = req.headers.host;
             let result = await this.tokenService.login(login, ipAddress);
