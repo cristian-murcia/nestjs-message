@@ -15,7 +15,7 @@ import { HttpExceptionFilter } from 'src/shared/exception/notFoundException';
     JwtModule.register({
       secret: "HolaPrecioso",
       signOptions: {
-        algorithm: 'HS256',
+        algorithm: 'HS256'
       },
     }),
     PassportModule.register({ defaultStrategy: "jwt" }),

@@ -124,7 +124,7 @@ export class TokenService {
 
             let token = new Token();
             token.idUser = user.id;
-            token.token = this.jwtService.sign(JSON.stringify(user));
+            token.token = this.jwtService.sign(String(user));
             token.ipAddress = ipAddres;
             token.deletedAt = new Date();
 
