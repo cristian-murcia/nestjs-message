@@ -45,7 +45,7 @@ export class UserService {
             if (user) {
                 return {
                     status: HttpStatus.OK,
-                    message: "Usuario consultado con éxito",
+                    message: "Usuario consultado con éxito.",
                     error: null,
                     result: user
                 }
