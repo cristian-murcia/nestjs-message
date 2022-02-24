@@ -6,25 +6,28 @@ import { Token, User } from 'src/entities';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { SharedModule } from 'src/shared/shared.module';
-import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionFilter } from 'src/shared/exception/notFoundException';
+import { JwtStrategy } from './providers/jwt-strategy';
+import { JwtAuthGuard } from './providers/jwt-auth-guard';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Token, User]),
+    PassportModule,
     JwtModule.register({
-      secret: "HolaPrecioso",
+      secret: "Hola-Precioso",
       signOptions: {
-        algorithm: 'HS256'
+        algorithm: 'HS256',
+        //expiresIn: "60s",
       },
+      verifyOptions: {
+        algorithms: ['HS256'],
+        ignoreExpiration: false,
+      }
     }),
-    PassportModule.register({ defaultStrategy: "jwt" }),
     SharedModule
   ],
   controllers: [TokenController],
-  providers: [
-    TokenService
-  ],
-  exports: [TypeOrmModule, TokenService]
+  providers: [TokenService, JwtStrategy, JwtAuthGuard],
+  exports: [TypeOrmModule, TokenService, PassportModule, JwtModule]
 })
 export class TokenModule { }

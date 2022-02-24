@@ -1,7 +1,6 @@
-import { Body, Controller, HttpException, InternalServerErrorException, Post, Req, Res, UseFilters } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { HttpExceptionFilter } from 'src/shared/exception/notFoundException';
 import { ValidationPipe } from 'src/shared/pipes/validation-pipe';
 import { LoginDto } from './dto/loginDto';
 import { TokenService } from './providers/token.service';
@@ -13,6 +12,7 @@ export class TokenController {
 
     @ApiOkResponse({ description: "Inicio de sesión", type: LoginDto })
     @ApiOperation({ summary: "Login de usuarios" })
+    @ApiBearerAuth('jwt-token')
     @Post()
     async login(
         @Body(new ValidationPipe()) login: LoginDto,

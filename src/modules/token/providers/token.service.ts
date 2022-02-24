@@ -22,13 +22,9 @@ export class TokenService {
      * @param idUser 
      * @returns 
      */
-    public async getTokenForId(idUser: number): Promise<Array<Token>> {
+    public async getTokenForIdUser(idUser: number): Promise<Token> {
         try {
-            return await this.tokenRepository.find({
-                where: {
-                    idUser
-                }
-            });
+            return await this.tokenRepository.findOne({ where: { idUser: idUser } });
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -122,19 +118,29 @@ export class TokenService {
                 throw new UnauthorizedException('Contraseña invalida');
             }
 
+            let existSesion: Token = await this.getTokenForIdUser(user.id);
+            if (existSesion) {
+                //let validToken = this.jwtService.verify(existSesion.token);
+
+                if (false) { //validToken
+                    throw new UnauthorizedException('El usuario posee una sesión activa');
+                } else {
+                    await this.tokenRepository.delete(existSesion.id);
+                }
+            }
+
             let token = new Token();
             token.idUser = user.id;
-            token.token = this.jwtService.sign(String(user));
+            token.token = this.jwtService.sign(JSON.stringify(user));
             token.ipAddress = ipAddres;
             token.deletedAt = new Date();
-
-            let response = await this.tokenRepository.save(token);
+            await this.tokenRepository.save(token);
 
             return {
                 status: HttpStatus.OK,
                 error: null,
                 message: 'Token creado con éxito',
-                result: response
+                result: token.token
             } as IResponse;
 
         } catch (error: any) {
