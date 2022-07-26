@@ -9,7 +9,7 @@ export class AuthTokenMiddleware implements NestMiddleware {
   constructor(private readonly tokenService: TokenService) { }
 
   use(req: Request, res: Response, next: NextFunction) {
-    console.log(1, req.headers.host);
+    console.log(1, 'middleware', req.headers);
     next();
   }
 }

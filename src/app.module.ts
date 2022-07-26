@@ -15,11 +15,11 @@ import { HttpExceptionFilter } from './shared/exception/notFoundException';
 @Module({
   imports: [
     UserModule,
-    TokenModule,
     SharedModule,
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConnectionService
     }),
+    TokenModule,
   ],
   controllers: [AppController],
   providers: [

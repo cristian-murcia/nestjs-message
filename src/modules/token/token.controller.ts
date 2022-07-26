@@ -12,7 +12,6 @@ export class TokenController {
 
     @ApiOkResponse({ description: "Inicio de sesión", type: LoginDto })
     @ApiOperation({ summary: "Login de usuarios" })
-    @ApiBearerAuth('jwt-token')
     @Post()
     async login(
         @Body(new ValidationPipe()) login: LoginDto,

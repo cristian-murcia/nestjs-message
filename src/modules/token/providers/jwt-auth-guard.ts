@@ -17,7 +17,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
         // You can throw an exception based on either "info" or "err" arguments
         if (err || !user) {
-            throw err || new UnauthorizedException('Usuario inautorizado');
+            throw err || new UnauthorizedException('Usuario no autorizado');
         }
         return user;
     }

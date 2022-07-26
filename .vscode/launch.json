@@ -1,21 +1,21 @@
 {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
-            "type": "node",
+            "type": "pwa-node",
             "request": "launch",
-            "name": "Debugging Nest.js",
-            "runtimeArgs": [
-                "-r",
-                "-ts-node/register",
-                "-r",
-                "tsconfig-paths/register"
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
             ],
-            "args": [
-                "${workspaceFolder}/src/main.ts"
-            ],
-            "autoAttachChildProcesses": true
+            "program": "${workspaceFolder}\\src\\modules\\token\\providers\\token.service.ts",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.js"
+            ]
         }
     ]
 }

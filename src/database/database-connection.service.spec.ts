@@ -15,4 +15,8 @@ describe('DatabaseConnectionService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('Deberia retornar un objeto', () => {
+    expect(service.createTypeOrmOptions).not.toBeNull();
+  });
 });

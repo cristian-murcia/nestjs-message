@@ -10,14 +10,31 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
-
+  
   const config = new DocumentBuilder()
     .setTitle('Api en Node.Js con Nestjs')
     .setDescription('El api es de prueba e ira escalando según requerimientos de proyecto personal')
+    .setContact(
+      'Cristian Arnulfo Murcia Guzmán',
+      'https://www.linkedin.com/in/cristian-arnulfo-murcia-guzman/',
+      'djcrissguzman@gmail.com'
+    )
     .setVersion('1.0')
+    .addBearerAuth(
+      /*{
+        type: 'http',
+        scheme: 'bearer',
+        in: 'header',
+        bearerFormat: 'JWT',
+        name: 'jwt',
+        description: 'Por favor inserte su token jwt',
+      },
+      'JWT-auth',*/
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+  
 
   await app.listen(3000);
 
