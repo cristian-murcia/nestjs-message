@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
@@ -7,10 +8,10 @@ import { HttpExceptionFilter } from './shared/exception/notFoundException';
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app: INestApplication = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
-  
+
   const config = new DocumentBuilder()
     .setTitle('Api en Node.Js con Nestjs')
     .setDescription('El api es de prueba e ira escalando según requerimientos de proyecto personal')
@@ -21,27 +22,28 @@ async function bootstrap() {
     )
     .setVersion('1.0')
     .addBearerAuth(
-      /*{
-        type: 'http',
-        scheme: 'bearer',
-        in: 'header',
-        bearerFormat: 'JWT',
-        name: 'jwt',
-        description: 'Por favor inserte su token jwt',
-      },
-      'JWT-auth',*/
-    )
+    /*{
+      type: 'http',
+      scheme: 'bearer',
+      in: 'header',
+      bearerFormat: 'JWT',
+      name: 'jwt',
+      description: 'Por favor inserte su token jwt',
+    },
+    'JWT-auth',*/
+  )
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-  
+  const document = SwaggerModule.createDocument(app, { ...config }, { ignoreGlobalPrefix: true, });
+  SwaggerModule.setup('api/swagger', app, document);
 
-  await app.listen(3000);
+
+  await app.listen(3000).then(() => console.log("Corriendo servicio rest"));
 
   // eslint-disable-next-line prettier/prettier
-  if (module.hot) {
+  /*if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());
-  }
+  }*/
 }
+
 bootstrap();

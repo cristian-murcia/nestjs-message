@@ -2,8 +2,6 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DatabaseConnectionService } from './database/database-connection.service';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 import { UserModule } from './modules/user/user.module';
 import { TokenModule } from './modules/token/token.module';
@@ -21,9 +19,8 @@ import { HttpExceptionFilter } from './shared/exception/notFoundException';
     }),
     TokenModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter
