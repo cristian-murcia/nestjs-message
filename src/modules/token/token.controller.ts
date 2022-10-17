@@ -1,6 +1,8 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Request} from 'express';
+
+import { IResponse } from 'src/shared/interfaces/response';
 import { ValidationPipe } from 'src/shared/pipes/validation-pipe';
 import { LoginDto } from './dto/loginDto';
 import { TokenService } from './providers/token.service';
@@ -16,13 +18,11 @@ export class TokenController {
     async login(
         @Body(new ValidationPipe()) login: LoginDto,
         @Req() req: Request,
-        @Res() res: Response,
-    ): Promise<void> {
+    ): Promise<IResponse> {
         try {
             let ipAddress: string = req.headers.host;
-            let result = await this.tokenService.login(login, ipAddress);
-            res.status(result.status).send(result);
-
+            return await this.tokenService.login(login, ipAddress);
+            
         } catch (error) {
             throw error;
         }

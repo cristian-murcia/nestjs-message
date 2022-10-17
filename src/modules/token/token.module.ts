@@ -17,11 +17,11 @@ import { JwtAuthGuard } from './providers/jwt-auth-guard';
       secret: "Hola-Precioso",
       signOptions: {
         algorithm: 'HS256',
-        //expiresIn: "60s",
+        expiresIn: "60s",
       },
       verifyOptions: {
         algorithms: ['HS256'],
-        ignoreExpiration: false,
+        ignoreExpiration: false
       }
     }),
     SharedModule

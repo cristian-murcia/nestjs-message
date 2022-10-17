@@ -74,8 +74,6 @@ export class TokenService {
     public async revokeToken(token: string): Promise<IResponse> {
         try {
             let user: any = JSON.parse(String(this.jwtService.decode(token)));
-            console.log('User', user);
-
             let deletedTokenActive = await this.tokenRepository.delete(token);
 
             if (!deletedTokenActive) {
@@ -108,47 +106,56 @@ export class TokenService {
             let user: User = await this.userRepository.findOne({
                 where: { email: login.email }
             });
-
-            if (!user) {
-                throw new NotFoundException('El usuario no existe')
-            }
+            if (!user) throw new NotFoundException('El usuario no existe')
 
             let isValid: boolean = await user.comparatePassword(login.password);
-            if (!isValid) {
-                throw new UnauthorizedException('Contraseña invalida');
-            }
+            if (!isValid) throw new UnauthorizedException('Contraseña invalida');
 
-            let existSesion: Token = await this.getTokenForIdUser(user.id);
-            if (existSesion) {
-                //let validToken = this.jwtService.verify(existSesion.token);
-
-                if (false) { //validToken
-                    throw new UnauthorizedException('El usuario posee una sesión activa');
-                } else {
-                    await this.tokenRepository.delete(existSesion.id);
-                }
-            }
+            delete user.password;
 
             let token = new Token();
             token.idUser = user.id;
-            token.token = this.jwtService.sign(JSON.stringify(user));
+            token.token = this.jwtService.sign({ ...user });
             token.ipAddress = ipAddres;
             token.deletedAt = new Date();
-            await this.tokenRepository.save(token);
+            let result: Token = await this.tokenRepository.save(token);
+            await this.deleteTokenExpired(user.id);
 
             return {
                 status: HttpStatus.OK,
-                error: null,
                 message: 'Token creado con éxito',
-                result: token.token
+                result: result.token
             } as IResponse;
 
-        } catch (error: any) {
-            if (error instanceof InternalServerErrorException) {
+        } catch (error) {
+            if (error instanceof InternalServerErrorException)
                 throw new InternalServerErrorException('Error interno mi rey');
-            } else {
-                throw error;
+
+            throw error;
+        }
+    }
+
+    /**
+     * Eliminar sesiones
+     * @param idUser 
+     */
+    public async deleteTokenExpired(idUser: number): Promise<void> {
+        try {
+            let tokens: Array<Token> = await this.tokenRepository.find({ where: { idUser } });
+
+            if (tokens.length > 0) {
+                tokens.forEach(async (token, index) => {
+                    try {
+                        this.jwtService.verify(token.token);
+
+                    } catch (error) {
+                        await this.tokenRepository.delete(token.id);
+                    }
+                });
             }
+
+        } catch (error) {
+            throw new InternalServerErrorException("Error consultando los tokens disponibles del usuario")
         }
     }
 

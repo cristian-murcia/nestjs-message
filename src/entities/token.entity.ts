@@ -5,7 +5,8 @@ import { User } from "./user.entity";
 
 @Entity('token')
 export class Token extends AbstractEntity {
-    @Column()
+    
+    @Column({length: 500})
     token: string;
 
     @ManyToOne(
