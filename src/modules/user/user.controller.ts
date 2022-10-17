@@ -1,20 +1,27 @@
 import {
   Body, Controller, Delete, Get,
-  HttpException, HttpStatus, NotFoundException, Param, Post, Put, Res, UseGuards
+  UseInterceptors,
+  Param, Post, Put, Res, UseGuards
 } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiParam, ApiProperty, ApiTags, ApiUnauthorizedResponse, } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse,
+  ApiOperation, ApiParam, ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 
-import { IResponse } from 'src/shared/interfaces/response';
 import { ValidationPipe } from 'src/shared/pipes/validation-pipe';
 import { UserDto } from './dto/userDto';
 import { User } from '../../entities/user.entity';
 import { UserService } from './providers/user.service';
 import { JwtAuthGuard } from '../token/providers/jwt-auth-guard';
 import { JwtStrategy } from '../token/providers/jwt-strategy';
+import { ResponseInterceptor } from 'src/shared/interceptor/response.interceptor';
+import { IResponse } from 'src/shared/interfaces/response';
 
 @ApiTags('Usuario')
 @ApiBearerAuth()
+@UseInterceptors(ResponseInterceptor)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -62,14 +69,13 @@ export class UserController {
   @ApiBadRequestResponse({ description: "Bad request", type: UserDto })
   @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
   @ApiOperation({ summary: "Crear un nuevo usuario" })
+  @UseInterceptors(ResponseInterceptor)
   @Post()
   async createUser(
     @Body(new ValidationPipe()) createUserDto: UserDto,
-    @Res() res: Response
-  ): Promise<void> {
+  ): Promise<IResponse> {
     try {
-      let result = await this.userService.createUser(createUserDto);
-      res.status(result.status).send(result);
+      return await this.userService.createUser(createUserDto);
 
     } catch (error) {
       throw error;

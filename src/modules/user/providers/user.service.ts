@@ -65,11 +65,23 @@ export class UserService {
      */
     public async createUser(data: UserDto): Promise<IResponse> {
         try {
+            let existUser: User = await this.userRepository.findOne({
+                where: {
+                    email: data.email
+                }
+            });
+
+            if (existUser)
+                return {
+                    status: HttpStatus.ACCEPTED,
+                    message: "El usuario ya existe con ese correo"
+                }
+
             const user = new User;
             user.email = data.email;
             user.name = data.name;
             user.password = data.password;
-            let userCreated = await this.userRepository.save(user);
+            let userCreated: User = await this.userRepository.save(user);
 
             return {
                 status: HttpStatus.OK,

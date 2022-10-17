@@ -1,3 +1,4 @@
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -7,8 +8,8 @@ import { UserModule } from './modules/user/user.module';
 import { TokenModule } from './modules/token/token.module';
 import { SharedModule } from './shared/shared.module';
 import { AuthTokenMiddleware } from './shared/middleware/auth-token.middleware';
-import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/exception/notFoundException';
+import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
 
 @Module({
   imports: [
@@ -24,6 +25,10 @@ import { HttpExceptionFilter } from './shared/exception/notFoundException';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor
     }
   ],
 })

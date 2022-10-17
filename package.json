@@ -1,6 +1,6 @@
 {
   "name": "message-app",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Api rest de messages, prueba en nestjs",
   "author": "Cristian Arnulfo Murcia Guzmàn",
   "private": false,

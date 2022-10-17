@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './shared/exception/notFoundException';
+import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
 
 declare const module: any;
 
@@ -11,6 +12,7 @@ async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   const config = new DocumentBuilder()
     .setTitle('Api en Node.Js con Nestjs')
@@ -33,7 +35,7 @@ async function bootstrap() {
     'JWT-auth',*/
   )
     .build();
-  const document = SwaggerModule.createDocument(app, { ...config }, { ignoreGlobalPrefix: true, });
+  const document = SwaggerModule.createDocument(app, { ...config }, { ignoreGlobalPrefix: false });
   SwaggerModule.setup('api/swagger', app, document);
 
 
