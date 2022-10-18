@@ -11,6 +11,7 @@ import { SharedModule } from './shared/shared.module';
 import { AuthTokenMiddleware } from './shared/middleware/auth-token.middleware';
 import { HttpExceptionFilter } from './shared/exception/notFoundException';
 import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
+import { NodeMailerModule } from './modules/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
       useClass: DatabaseConnectionService
     }),
     TokenModule,
+    NodeMailerModule
   ],
   controllers: [],
   providers: [
