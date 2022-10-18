@@ -20,7 +20,6 @@ import { ParseIntPipe } from '@nestjs/common';
 import { ParseIntPipeOptions } from '@nestjs/common';
 
 @ApiTags('Usuario')
-@ApiBearerAuth()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -29,7 +28,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: "Bad request", type: UserDto })
   @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
   @ApiOperation({ summary: "Traer todos los usuarios" })
-  @UseGuards(JwtStrategy)
+  @ApiBearerAuth("JWT-auth")
   @Get()
   async getAllUser(): Promise<IResponse> {
     try {
@@ -43,8 +42,9 @@ export class UserController {
   @ApiOkResponse({ description: "Success", type: UserDto })
   @ApiBadRequestResponse({ description: "Bad request", type: UserDto })
   @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
-  @ApiParam({ name: "id", description: "Id de usuario", example: 1 })
   @ApiOperation({ summary: "Traer un usuario por Id" })
+  @ApiParam({ name: "id", description: "Id de usuario", example: 1 })
+  @ApiBearerAuth("JWT-auth")
   @Get(':id')
   async getUserForId(
     @Param('id', new ParseIntPipe()) id: number,
@@ -77,6 +77,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: "Bad request", type: UserDto })
   @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
   @ApiOperation({ summary: "Actualizar un usuario existente" })
+  @ApiBearerAuth("JWT-auth")
   @Put(':id')
   async updateUser(
     @Param('id', new ParseIntPipe()) id: number,
@@ -95,6 +96,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: "Unauthorized", type: UserDto })
   @ApiParam({ name: "id", description: "Id de usuario a eliminar", example: 1 })
   @ApiOperation({ summary: "Eliminar un usuario existente" })
+  @ApiBearerAuth("JWT-auth")
   @Delete(':id')
   async deleteUserForId(
     @Param('id', new ParseIntPipe()) userId: number,

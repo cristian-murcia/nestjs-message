@@ -1,15 +1,23 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 
-import { TokenService } from 'src/modules/token/providers/token.service';
+import { JwtService } from '@nestjs/jwt';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class AuthTokenMiddleware implements NestMiddleware {
 
-  constructor(private readonly tokenService: TokenService) { }
+  constructor(private readonly jwtService: JwtService) { }
 
   use(req: Request, res: Response, next: NextFunction) {
-    console.log(1, 'middleware', req.headers);
-    next();
+
+    try {
+      let token: string = req.headers.authorization.replace("Bearer ", "");
+      this.jwtService.verify(token);
+      next();
+
+    } catch (error) {
+      throw new UnauthorizedException("Token invalido");
+    }
   }
 }

@@ -17,7 +17,7 @@ import { JwtAuthGuard } from './providers/jwt-auth-guard';
       secret: "Hola-Precioso",
       signOptions: {
         algorithm: 'HS256',
-        expiresIn: "60s",
+        expiresIn: "2d",
       },
       verifyOptions: {
         algorithms: ['HS256'],

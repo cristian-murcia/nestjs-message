@@ -10,6 +10,8 @@ import { SharedModule } from './shared/shared.module';
 import { AuthTokenMiddleware } from './shared/middleware/auth-token.middleware';
 import { HttpExceptionFilter } from './shared/exception/notFoundException';
 import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
+import { RouteInfo } from '@nestjs/common/interfaces';
+import { RequestMethod } from '@nestjs/common';
 
 @Module({
   imports: [
@@ -34,8 +36,26 @@ import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthTokenMiddleware)
-      .forRoutes('user');
+
+    let routes: Array<RouteInfo> = [
+      {
+        path: "/user",
+        method: RequestMethod.GET
+      },
+      {
+        path: "/user",
+        method: RequestMethod.PUT
+      },
+      {
+        path: "/user/?",
+        method: RequestMethod.DELETE
+      },
+      {
+        path: "/refreshToken",
+        method: RequestMethod.GET
+      }
+    ]
+
+    consumer.apply(AuthTokenMiddleware).forRoutes(...routes);
   }
 }
