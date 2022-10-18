@@ -47,11 +47,15 @@ export class AppModule implements NestModule {
         method: RequestMethod.PUT
       },
       {
-        path: "/user/?",
+        path: "/user",
         method: RequestMethod.DELETE
       },
       {
-        path: "/refreshToken",
+        path: "refreshToken",
+        method: RequestMethod.GET
+      },
+      {
+        path: "revokeToken",
         method: RequestMethod.GET
       }
     ]

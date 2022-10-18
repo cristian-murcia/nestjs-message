@@ -12,9 +12,9 @@ export class AuthTokenMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
 
     try {
-      let token: string = req.headers.authorization.replace("Bearer ", "");
-      this.jwtService.verify(token);
-      next();
+      if (this.jwtService.verify(req.headers?.authorization.replace("Bearer ", ""))) {
+        next();
+      }
 
     } catch (error) {
       throw new UnauthorizedException("Token invalido");

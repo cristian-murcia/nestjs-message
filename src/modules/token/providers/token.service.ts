@@ -91,13 +91,10 @@ export class TokenService {
             let user: any = this.jwtService.decode(token);
 
             let tokenActually: Token = await this.tokenRepository.findOne({ where: { idUser: user.id, token } });
+            if (!tokenActually) throw new NotFoundException('No se ha encontrado el token');
 
-            //let user: any = JSON.parse(String(this.jwtService.decode(token)));
             let deletedTokenActive = await this.tokenRepository.delete(tokenActually.id);
-
-            if (!deletedTokenActive) {
-                throw new NotFoundException('No se ha encontrado el token');
-            }
+            if (!deletedTokenActive) throw new NotFoundException('No se ha encontrado el token');
 
             return {
                 status: HttpStatus.OK,

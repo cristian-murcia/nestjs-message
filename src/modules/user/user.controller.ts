@@ -1,6 +1,6 @@
 import {
   Body, Controller, Delete, Get,
-  Param, Post, Put, UseGuards
+  Param, Post, Put
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse,
