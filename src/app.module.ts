@@ -1,5 +1,6 @@
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { RouteInfo } from '@nestjs/common/interfaces';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DatabaseConnectionService } from './database/database-connection.service';
@@ -10,8 +11,6 @@ import { SharedModule } from './shared/shared.module';
 import { AuthTokenMiddleware } from './shared/middleware/auth-token.middleware';
 import { HttpExceptionFilter } from './shared/exception/notFoundException';
 import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
-import { RouteInfo } from '@nestjs/common/interfaces';
-import { RequestMethod } from '@nestjs/common';
 
 @Module({
   imports: [

@@ -1,6 +1,6 @@
 import {
   Body, Controller, Delete, Get,
-  Param, Post, Put
+  Param, Post, Put, ParseIntPipe
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse,
@@ -12,12 +12,7 @@ import { ValidationPipe } from 'src/shared/pipes/validation-pipe';
 import { UserDto } from './dto/userDto';
 import { User } from '../../entities/user.entity';
 import { UserService } from './providers/user.service';
-import { JwtAuthGuard } from '../token/providers/jwt-auth-guard';
-import { JwtStrategy } from '../token/providers/jwt-strategy';
-import { ResponseInterceptor } from 'src/shared/interceptor/response.interceptor';
 import { IResponse } from 'src/shared/interfaces/response';
-import { ParseIntPipe } from '@nestjs/common';
-import { ParseIntPipeOptions } from '@nestjs/common';
 
 @ApiTags('Usuario')
 @Controller('user')

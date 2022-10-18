@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TokenController } from './token.controller';
-import { TokenService } from './providers/token.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Token, User } from 'src/entities';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+
+import { Token, User } from 'src/entities';
 import { SharedModule } from 'src/shared/shared.module';
-import { JwtStrategy } from './providers/jwt-strategy';
-import { JwtAuthGuard } from './providers/jwt-auth-guard';
+import { TokenController } from './token.controller';
+import { TokenService } from './providers/token.service';
 
 @Module({
   imports: [
@@ -27,7 +26,7 @@ import { JwtAuthGuard } from './providers/jwt-auth-guard';
     SharedModule
   ],
   controllers: [TokenController],
-  providers: [TokenService, JwtStrategy, JwtAuthGuard],
+  providers: [TokenService],
   exports: [TypeOrmModule, TokenService, PassportModule, JwtModule]
 })
 export class TokenModule { }
