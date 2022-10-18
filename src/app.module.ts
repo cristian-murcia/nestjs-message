@@ -1,5 +1,6 @@
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { RouteInfo } from '@nestjs/common/interfaces';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DatabaseConnectionService } from './database/database-connection.service';
@@ -10,6 +11,7 @@ import { SharedModule } from './shared/shared.module';
 import { AuthTokenMiddleware } from './shared/middleware/auth-token.middleware';
 import { HttpExceptionFilter } from './shared/exception/notFoundException';
 import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
+import { NodeMailerModule } from './modules/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
       useClass: DatabaseConnectionService
     }),
     TokenModule,
+    NodeMailerModule
   ],
   controllers: [],
   providers: [
@@ -34,8 +37,30 @@ import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthTokenMiddleware)
-      .forRoutes('user');
+
+    let routes: Array<RouteInfo> = [
+      {
+        path: "/user",
+        method: RequestMethod.GET
+      },
+      {
+        path: "/user",
+        method: RequestMethod.PUT
+      },
+      {
+        path: "/user",
+        method: RequestMethod.DELETE
+      },
+      {
+        path: "refreshToken",
+        method: RequestMethod.GET
+      },
+      {
+        path: "revokeToken",
+        method: RequestMethod.GET
+      }
+    ]
+
+    consumer.apply(AuthTokenMiddleware).forRoutes(...routes);
   }
 }

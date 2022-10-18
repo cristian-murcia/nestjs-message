@@ -24,16 +24,16 @@ async function bootstrap() {
     )
     .setVersion('1.0')
     .addBearerAuth(
-    /*{
-      type: 'http',
-      scheme: 'bearer',
-      in: 'header',
-      bearerFormat: 'JWT',
-      name: 'jwt',
-      description: 'Por favor inserte su token jwt',
-    },
-    'JWT-auth',*/
-  )
+      {
+        type: 'http',
+        scheme: 'bearer',
+        in: 'header',
+        bearerFormat: 'JWT',
+        name: 'jwt',
+        description: 'Por favor inserte su token jwt',
+      },
+      'JWT-auth',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, { ...config }, { ignoreGlobalPrefix: false });
   SwaggerModule.setup('api/swagger', app, document);
