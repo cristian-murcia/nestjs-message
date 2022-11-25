@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
-import { Mailer } from './providers/mailer';
+import { MailerProviders } from './providers/mailer';
 import { MailerController } from './mailer.controller';
 import { SharedModule } from '../../shared/shared.module';
 
@@ -33,8 +33,8 @@ import { SharedModule } from '../../shared/shared.module';
         }),
         SharedModule
     ],
-    providers: [Mailer],
+    providers: [MailerProviders],
     controllers: [MailerController],
-    exports: [MailerModule]
+    exports: [MailerModule, MailerProviders]
 })
 export class NodeMailerModule { }

@@ -1,36 +1,41 @@
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
-import { Injectable, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpStatus, InternalServerErrorException } from '@nestjs/common';
 
 import { IResponse } from '../../../shared/interfaces/response';
 
 @Injectable()
-export class Mailer {
+export class MailerProviders {
 
     constructor(
         private readonly mailerService: MailerService
     ) { }
 
-    public async sendPassword(): Promise<IResponse> {
-        let data: ISendMailOptions = {
-            to: 'test@nestjs.com', // list of receivers
-            from: 'noreply@nestjs.com', // sender address
-            subject: 'Testing Nest MailerModule ✔', // Subject line
-            text: 'welcome', // plaintext body
-            html: '<b>welcome</b>', // HTML body content
+    /**
+     * Envio de correo electronico
+     * @param destino 
+     * @param message 
+     * @param subject 
+     * @returns 
+     */
+    public async sendPassword(destino: string, message: string, subject: string): Promise<IResponse> {
+        try {
+            let data: ISendMailOptions = {
+                to: destino,
+                from: 'noreply@nestjs.com',
+                subject,
+                //text: ' 123456879', // plaintext body
+                html: message
+            }
+
+            await this.mailerService.sendMail(data);
+            return {
+                status: HttpStatus.OK,
+                message: "Correo enviado con éxito"
+            };
+        } catch (error) {
+            throw new InternalServerErrorException("Ocurrio un error al enviar el correo de recuperación");
         }
-
-        this.mailerService.sendMail(data).then((data) => {
-            console.log("llego: ", data);
-
-        }).catch(error => {
-            console.log("error: ", error);
-            
-        });
-
-        return {
-            status: HttpStatus.ACCEPTED,
-            message: "Correo enviado"
-        } as IResponse;
     }
+
 
 }

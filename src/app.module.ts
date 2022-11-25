@@ -7,7 +7,9 @@ import { DatabaseConnectionService } from './database/database-connection.servic
 
 import { UserModule } from './modules/user/user.module';
 import { TokenModule } from './modules/token/token.module';
+import { RecoverModule } from './modules/recoverPassword/recover.module';
 import { SharedModule } from './shared/shared.module';
+
 import { AuthTokenMiddleware } from './shared/middleware/auth-token.middleware';
 import { HttpExceptionFilter } from './shared/exception/notFoundException';
 import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
@@ -21,7 +23,8 @@ import { NodeMailerModule } from './modules/mailer/mailer.module';
       useClass: DatabaseConnectionService
     }),
     TokenModule,
-    NodeMailerModule
+    //NodeMailerModule
+    RecoverModule
   ],
   controllers: [],
   providers: [

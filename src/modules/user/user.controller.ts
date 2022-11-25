@@ -10,7 +10,6 @@ import {
 
 import { ValidationPipe } from 'src/shared/pipes/validation-pipe';
 import { UserDto } from './dto/userDto';
-import { User } from '../../entities/user.entity';
 import { UserService } from './providers/user.service';
 import { IResponse } from 'src/shared/interfaces/response';
 
