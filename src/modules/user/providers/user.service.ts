@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { UserDto } from '../dto/userDto';
 import { User } from '../../../entities/user.entity';
@@ -8,7 +8,7 @@ import { IResponse } from 'src/shared/interfaces/response';
 
 @Injectable()
 export class UserService {
-
+  
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,

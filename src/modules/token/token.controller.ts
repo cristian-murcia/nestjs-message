@@ -15,7 +15,7 @@ export class TokenController {
     constructor(private readonly tokenService: TokenService) { }
 
     @ApiOkResponse({ description: "Inicio de sesión", type: LoginDto })
-    @ApiOperation({ summary: "Login de usuarios" })
+    @ApiOperation({ summary: "Login de usuarios" })  
     @Post('/login')
     async login(
         @Body(new ValidationPipe()) login: LoginDto,

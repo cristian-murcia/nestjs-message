@@ -143,7 +143,7 @@ export class TokenService {
 
         } catch (error) {
             if (error instanceof InternalServerErrorException)
-                throw new InternalServerErrorException('Error interno mi rey');
+                throw new InternalServerErrorException('Error interno al iniciar sesión');
 
             throw error;
         }
